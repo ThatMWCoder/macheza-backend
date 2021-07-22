@@ -1,9 +1,14 @@
 import { Exclude } from 'class-transformer';
-import { Role } from 'src/role/models/role.entity';
-import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+import { IsEmail } from 'class-validator';
+import {
+  Column,
+  Entity,
+  JoinColumn,
+  ManyToOne,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 
-
-@Entity("users")
+@Entity('users')
 export class User {
   @PrimaryGeneratedColumn()
   id: number;
@@ -14,6 +19,7 @@ export class User {
   @Column()
   last_name: string;
 
+  @IsEmail()
   @Column({ unique: true })
   email: string;
 
@@ -21,7 +27,11 @@ export class User {
   @Exclude()
   password: string;
 
-  @ManyToOne(()=>Role)
-  @JoinColumn({name: "role_id"})
-  role?: Role
+  @Column({ default: '' })
+  bio: string;
+
+  @Column({ default: null, nullable: true })
+  image: string | null;
+
+  
 }

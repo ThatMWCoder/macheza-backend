@@ -3,6 +3,7 @@ import {
   Body,
   ClassSerializerInterceptor,
   NotFoundException,
+  Put,
   Req,
   Res,
   UseGuards,
@@ -24,7 +25,6 @@ export class AuthController {
   constructor(
     private userService: UserService,
     private jwtService: JwtService,
-    private authService: AuthService
   ) {}
 
   @Post('register')
@@ -39,7 +39,6 @@ export class AuthController {
       last_name: body.last_name,
       email: body.email,
       password: hashed,
-      role: { id: 1 },
     });
   }
   @Post('login')
@@ -64,13 +63,8 @@ export class AuthController {
     return user;
   }
 
-  @UseGuards(AuthGuard)
-  @Get('user')
-  async user(@Req() request: Request) {
-   const id = await this.authService.userId(request)
+ 
 
-    return this.userService.findOne({ id });
-  }
 
   @UseGuards(AuthGuard)
   @Post('logout')

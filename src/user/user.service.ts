@@ -24,4 +24,11 @@ export class UserService extends AbstractService {
       meta,
     };
   }
+
+  async followUser(first_name: string){
+    
+  }
+  async unfollowUser(first_name: string){
+
+  }
 }
