@@ -13,7 +13,10 @@ export class UserService extends AbstractService {
     super(userRepository);
   }
 
-  async paginate(page: number = 1, relations: any[] = []): Promise<PaginatedResult> {
+  async paginate(
+    page: number = 1,
+    relations: any[] = [],
+  ): Promise<PaginatedResult> {
     const { data, meta } = await super.paginate(page, relations);
 
     return {
@@ -25,10 +28,24 @@ export class UserService extends AbstractService {
     };
   }
 
-  async followUser(first_name: string){
-    
+  async followUser(currentUser: User, first_name: string) {
+    const user = await this.userRepository.findOne({
+      where: { first_name },
+      relations: ['followers'],
+    });
+    user.followers.push(currentUser);
+    await user.save();
+    return user.toProfile(currentUser);
   }
-  async unfollowUser(first_name: string){
-
+  async unfollowUser(currentUser: User, first_name: string) {
+    const user = await this.userRepository.findOne({
+      where: { first_name },
+      relations: ['followers'],
+    });
+    user.followers = user.followers.filter(
+      (follower) => follower !== currentUser,
+    );
+    await user.save();
+    return user.toProfile(currentUser);
   }
 }
