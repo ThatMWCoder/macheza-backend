@@ -28,18 +28,30 @@ export class UserService extends AbstractService {
     };
   }
 
-  async followUser(currentUser: User, first_name: string) {
+  async findByUsername(
+    username:string,
+    user?:User,
+  ):Promise<User>{
+    return (
+      await this.userRepository.findOne({
+        where:{username},
+        relations:["followers"]
+      }) 
+    ).toProfile(user)
+
+  }
+  async followUser(currentUser: User, username: string) {
     const user = await this.userRepository.findOne({
-      where: { first_name },
+      where: { username },
       relations: ['followers'],
     });
     user.followers.push(currentUser);
     await user.save();
     return user.toProfile(currentUser);
   }
-  async unfollowUser(currentUser: User, first_name: string) {
+  async unfollowUser(currentUser: User, username: string) {
     const user = await this.userRepository.findOne({
-      where: { first_name },
+      where: { username },
       relations: ['followers'],
     });
     user.followers = user.followers.filter(

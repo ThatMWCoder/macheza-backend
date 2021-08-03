@@ -1,19 +1,18 @@
 import { IsEmail, IsOptional, MaxLength } from 'class-validator';
 
 export class UserUpdateDto {
+ 
   @IsOptional()
-  first_name?: string;
-
-  @IsOptional()
-  last_name?: string;
+  username: string;
 
   @IsOptional()
   @IsEmail()
-  email?: string;
+  email: string;
 
   @IsOptional()
-  @MaxLength(100)
+  @MaxLength(256)
   bio?: string;
 
-  image?: string | null;
+  @IsOptional()
+  image: string | null;
 }

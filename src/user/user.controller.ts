@@ -13,10 +13,7 @@ import {
   UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
-import { User } from './models/user.entity';
 import { UserService } from './user.service';
-import * as bcrypt from 'bcrypt';
-import { UserCreateDto } from './models/user-create.dto';
 import { AuthGuard } from 'src/auth/auth.guard';
 import { UserUpdateDto } from './models/user-update.dto';
 import { AuthService } from 'src/auth/auth.service';

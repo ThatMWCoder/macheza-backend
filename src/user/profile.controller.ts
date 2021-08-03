@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   Delete,
   Get,
   NotFoundException,
@@ -12,6 +13,8 @@ import { AuthGuard } from 'src/auth/auth.guard';
 import { UserService } from './user.service';
 import { Request } from 'express';
 import { AuthService } from 'src/auth/auth.service';
+import { HttpCode } from '@nestjs/common';
+import { User } from './models/user.entity';
 
 @Controller('profiles')
 export class ProfileController {
@@ -20,9 +23,15 @@ export class ProfileController {
     private authService: AuthService,
   ) {}
 
-  @Get('/:first_name')
-  async findProfile(@Param('first_name') first_name: string) {
-    const profile = await this.userService.findOne({ first_name });
+  @Get('/:username')
+  @UseGuards(AuthGuard)
+  async findProfile(
+    @Param('username') username: string,
+    @Req() request: Request,
+  ) {
+    const id = await this.authService.userId(request);
+    const user = await this.userService.findOne(id);
+    const profile = await this.userService.findByUsername(username);
     if (!profile) {
       throw new NotFoundException('Pepani yemwe mukufunayo palibe');
     }
@@ -30,25 +39,26 @@ export class ProfileController {
   }
 
   @UseGuards(AuthGuard)
-  @Post('/:first_name/follow')
+  @HttpCode(200)
+  @Post('/:username/follow')
   async followUser(
-    @Param('first_name') first_name: string,
+    @Param('username') username: string,
     @Req() request: Request,
   ) {
     const id = await this.authService.userId(request);
     const user = await this.userService.findOne(id);
-    const profile = await this.userService.followUser(user, first_name);
+    const profile = await this.userService.followUser(user, username);
     return { profile };
   }
 
-  @Delete('/:first_name/follow')
+  @Delete('/:username/follow')
   async unfollowUser(
-    @Param('first_name') first_name: string,
+    @Param('username') username: string,
     @Req() request: Request,
   ) {
     const id = await this.authService.userId(request);
     const user = await this.userService.findOne(id);
-    const profile = await this.userService.unfollowUser(user, first_name);
+    const profile = await this.userService.unfollowUser(user, username);
     return { profile };
   }
 }
