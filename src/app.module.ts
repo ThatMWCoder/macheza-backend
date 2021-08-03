@@ -4,6 +4,7 @@ import { User } from './user/models/user.entity';
 import { UserModule } from './user/user.module';
 import { AuthModule } from './auth/auth.module';
 import { CommonModule } from './common/common.module';
+import { ArticleModule } from './article/article.module';
 import "dotenv/config"
 
 @Module({
@@ -22,7 +23,8 @@ import "dotenv/config"
       entities: [User],
     }),
     AuthModule,
-    CommonModule
+    CommonModule,
+    ArticleModule
   ],
   controllers: [],
   providers: [],

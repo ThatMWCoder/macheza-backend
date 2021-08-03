@@ -1,5 +1,5 @@
-import { classToPlain, Exclude } from 'class-transformer';
 import { IsEmail } from 'class-validator';
+import { Article } from 'src/article/models/article.entity';
 import {
   BaseEntity,
   Column,
@@ -7,12 +7,14 @@ import {
   JoinColumn,
   JoinTable,
   ManyToMany,
-  ManyToOne,
+  OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 
+import { classToPlain, Exclude } from 'class-transformer';
+
 @Entity('users')
-export class User extends BaseEntity{
+export class User extends BaseEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
@@ -33,23 +35,30 @@ export class User extends BaseEntity{
   @Column({ default: null, nullable: true })
   image: string | null;
 
-  @ManyToMany(type=>User, user=>user.followee)
+  @ManyToMany((type) => User, (user) => user.followee)
   @JoinTable()
-  followers:User[]
+  followers: User[];
 
-  @ManyToMany(type=>User, user=>user.followers)
-  followee:User[]
+  @ManyToMany((type) => User, (user) => user.followers)
+  followee: User[];
+
+  @OneToMany((type) => Article, (article) => article.author)
+  articles: Article[];
+
+  @ManyToMany((type) => Article, (article) => article.favourited_by)
+  @JoinColumn()
+  favourites: Article[];
+
+
+  toProfile(user: User) {
+    const following = this.followers.includes(user);
+    const profile: any = this.toJSON();
+    delete profile.followers;
+
+    return { ...profile, following };
+  }
 
   toJSON(){
-    return classToPlain(this)
+    return classToPlain(this);
   }
-
-  toProfile(user: User){
-    const following = this.followers.includes(user)
-    const profile: any = this.toJSON()
-    delete profile.followers
-
-    return{...profile, following}
-  }
-  
 }
