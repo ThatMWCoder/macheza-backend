@@ -6,6 +6,7 @@ import { AuthModule } from './auth/auth.module';
 import { CommonModule } from './common/common.module';
 import { ArticleModule } from './article/article.module';
 import "dotenv/config"
+import { Article } from './article/models/article.entity';
 
 @Module({
   imports: [
@@ -20,7 +21,7 @@ import "dotenv/config"
       synchronize: true,
       dropSchema: false,
       logging: false,
-      entities: [User],
+      entities: [User, Article],
     }),
     AuthModule,
     CommonModule,
